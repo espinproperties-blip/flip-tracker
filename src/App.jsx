@@ -1,27 +1,36 @@
 import { useState, useRef, useEffect } from "react";
 
-const STORAGE_KEY = "fliptracker-projects";
+// ─── SUPABASE CONFIG ──────────────────────────────────────────────────────────
+const SUPABASE_URL = "https://xlusetknkmwyfwaejiei.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhsdXNldGtua213eWZ3YWVqaWVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MDM4MjAsImV4cCI6MjA5NDk3OTgyMH0.tcqTSADJg19FuuUwFILDcMtFpEjPtfpDvzWcXn4FBZs";
+const RECORD_ID = "main";
+
+const headers = {
+  "Content-Type": "application/json",
+  "apikey": SUPABASE_KEY,
+  "Authorization": `Bearer ${SUPABASE_KEY}`,
+};
 
 async function loadProjects() {
   try {
-    const result = await window.storage.get(STORAGE_KEY);
-    if (result?.value) return JSON.parse(result.value);
-  } catch {}
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/projects?id=eq.${RECORD_ID}&select=data`, { headers });
+    const rows = await res.json();
+    if (rows?.length > 0) return rows[0].data;
+  } catch (err) {
+    console.warn("Load failed:", err);
+  }
   return null;
 }
 
 async function saveProjects(projects) {
   try {
-    // Strip large base64 images from documents/photos/receipts to stay under 5MB
-    const slim = projects.map(p => ({
-      ...p,
-      photos: p.photos.map(ph => ({ ...ph, photo: ph.photo?.length > 200000 ? "[img]" : ph.photo })),
-      documents: p.documents.map(d => ({ ...d, fileData: d.fileData?.length > 300000 ? "[file]" : d.fileData })),
-      expenses: p.expenses.map(e => ({ ...e, receipt: e.receipt?.length > 200000 ? "[img]" : e.receipt })),
-    }));
-    await window.storage.set(STORAGE_KEY, JSON.stringify(slim));
+    await fetch(`${SUPABASE_URL}/rest/v1/projects`, {
+      method: "POST",
+      headers: { ...headers, "Prefer": "resolution=merge-duplicates" },
+      body: JSON.stringify({ id: RECORD_ID, data: projects, updated_at: new Date().toISOString() }),
+    });
   } catch (err) {
-    console.warn("Storage save failed:", err);
+    console.warn("Save failed:", err);
   }
 }
 
