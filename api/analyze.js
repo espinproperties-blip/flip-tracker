@@ -1,11 +1,8 @@
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') return res.status(405).end();
   try {
     const { image, mediaType, categories } = req.body;
-    if (!image) return res.status(400).json({ error: 'No image' });
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -14,18 +11,20 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 400,
-        messages: [{ role: 'user', content: [
-          { type: 'image', source: { type: 'base64', media_type: mediaType || 'image/jpeg', data: image } },
-          { type: 'text', text: 'Analiza esta factura. Responde SOLO JSON sin texto extra: {"description":"descripcion breve","amount":123.45,"date":"YYYY-MM-DD","category":"materials"}. Categoria debe ser una de: ' + categories }
-        ]}]
+        max_tokens: 500,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: image } },
+            { type: 'text', text: 'You are analyzing a construction invoice. Extract: description, total amount as number, date as YYYY-MM-DD, and category from: ' + categories + '. Reply ONLY with this exact JSON format, no other text: {"description":"...","amount":0,"date":"YYYY-MM-DD","category":"..."}' }
+          ]
+        }]
       })
     });
-    const data = await response.json();
-    const text = data.content?.[0]?.text || '{}';
-    const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
-    res.status(200).json(parsed);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const d = await r.json();
+    const t = (d.content?.[0]?.text || '{}').replace(/```json|```/g,'').trim();
+    res.status(200).json(JSON.parse(t));
+  } catch(e) {
+    res.status(500).json({ error: e.message });
   }
 }
