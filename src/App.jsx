@@ -315,16 +315,24 @@ function ExpenseModal({ project, onClose, onSave }) {
       const dataUrl = ev.target.result;
       setPreview(dataUrl); setAnalyzing(true);
       try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 300, messages: [{ role: "user", content: [
-            { type: "image", source: { type: "base64", media_type: file.type, data: dataUrl.split(",")[1] } },
-            { type: "text", text: `Analiza esta factura de construcción. Extrae descripción, monto total y categoría (opciones: ${Object.keys(cats).join(", ")}). Responde SOLO JSON sin markdown: {"description":"...","amount":0,"category":"..."}` }
-          ]}]})
+        const res = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: dataUrl.split(",")[1],
+            mediaType: file.type,
+            categories: Object.keys(cats).join(", ")
+          })
         });
-        const data = await res.json();
-        const parsed = JSON.parse(data.content?.[0]?.text?.replace(/```json|```/g,"").trim() || "{}");
-        setForm(f => ({ ...f, description: parsed.description||f.description, amount: parsed.amount||f.amount, category: parsed.category||f.category, receipt: dataUrl }));
+        const parsed = await res.json();
+        setForm(f => ({
+          ...f,
+          description: parsed.description || f.description,
+          amount: parsed.amount || f.amount,
+          category: parsed.category || f.category,
+          date: parsed.date || f.date,
+          receipt: dataUrl
+        }));
       } catch { setForm(f => ({ ...f, receipt: dataUrl })); }
       setAnalyzing(false);
     };
