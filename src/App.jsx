@@ -328,8 +328,8 @@ function ExpenseModal({ project, onClose, onSave }) {
         setForm(f => ({
           ...f,
           description: parsed.description || f.description,
-          amount: parsed.amount || f.amount,
-          category: parsed.category || f.category,
+          amount: parsed.amount ? String(parsed.amount) : f.amount,
+          category: (parsed.category && Object.keys(cats).includes(parsed.category)) ? parsed.category : f.category,
           date: parsed.date || f.date,
           receipt: dataUrl
         }));
