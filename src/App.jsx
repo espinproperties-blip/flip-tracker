@@ -36,14 +36,14 @@ async function saveProjects(projects) {
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const C = {
-  bg:       "#0F0F0F",
-  surface:  "#181818",
-  card:     "#1E1E1E",
-  border:   "#2A2A2A",
-  border2:  "#333333",
-  text:     "#F0F0F0",
-  muted:    "#888888",
-  faint:    "#444444",
+  bg:       "#F4F6F9",
+  surface:  "#FFFFFF",
+  card:     "#FFFFFF",
+  border:   "#DDE3ED",
+  border2:  "#C8D2E0",
+  text:     "#0D1B2A",
+  muted:    "#5A6A7E",
+  faint:    "#A0AFBF",
   // Accent palette — warm slate + vivid accents
   gold:     "#D4A843",
   goldDim:  "#D4A84320",
@@ -909,8 +909,8 @@ export default function App() {
           <div style={{ display:"flex", alignItems:"center", gap:12 }}>
             <img src="/logo.png" alt="Logo" style={{ width:42, height:42, borderRadius:10, objectFit:"cover" }} />
             <div>
-              <div style={{ fontSize:9, color:C.gold, textTransform:"uppercase", letterSpacing:3, fontFamily:"monospace" }}>PROJECT HQ</div>
-              <div style={{ fontSize:21, fontWeight:800, color:C.text, fontFamily:"'Sora',sans-serif" }}>Mis Proyectos</div>
+              <div style={{ fontSize:9, color:C.gold, textTransform:"uppercase", letterSpacing:3, fontFamily:"monospace" }}>EQUITY PILOT</div>
+              <div style={{ fontSize:21, fontWeight:800, color:C.text, fontFamily:"'Sora',sans-serif" }}>Equity Pilot</div> <div style={{ fontSize:9, color:C.muted, letterSpacing:1.5, marginTop:1 }}>From the receipt to profit</div>
             </div>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
