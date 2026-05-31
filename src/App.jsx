@@ -906,9 +906,12 @@ export default function App() {
       {/* Header */}
       <div style={{ background:C.surface, borderBottom:`1px solid ${C.border}`, padding:"16px 18px", position:"sticky", top:0, zIndex:50 }}>
         <div style={{ maxWidth:720, margin:"0 auto", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-          <div>
-            <div style={{ fontSize:9, color:C.gold, textTransform:"uppercase", letterSpacing:3, fontFamily:"monospace" }}>PROJECT HQ</div>
-            <div style={{ fontSize:21, fontWeight:800, color:C.text, fontFamily:"'Sora',sans-serif" }}>Mis Proyectos</div>
+          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+            <img src="/logo.png" alt="Logo" style={{ width:42, height:42, borderRadius:10, objectFit:"cover" }} />
+            <div>
+              <div style={{ fontSize:9, color:C.gold, textTransform:"uppercase", letterSpacing:3, fontFamily:"monospace" }}>PROJECT HQ</div>
+              <div style={{ fontSize:21, fontWeight:800, color:C.text, fontFamily:"'Sora',sans-serif" }}>Mis Proyectos</div>
+            </div>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             {saved && <span style={{ fontSize:11, color:C.green, fontWeight:600, animation:"fadein .3s ease" }}>✓ Guardado</span>}
